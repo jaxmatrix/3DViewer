@@ -5,12 +5,27 @@
 </div>
 
 <div class="container">
-  <div class="d-flex flex-row">
+  <div class="d-flex flex-row align-items-stretch justify-content-center">
     <div class="">
-      <div class="bg-primary text-white fs-4 p-5" >
-        <app-viewer></app-viewer>
+      <div class="bg-secondary text-white fs-4 " >
+        <app-viewer [height]="400" [width]="800"></app-viewer>
       </div>
     </div>
-    <div class="">There</div>
+    <div class="flex-grow-1 p-2">
+      <mat-card #logs class="h-100 bs-bb d-flex flex-row align-items-center justify-content-center">
+        <span class="fs-3">Default Content</span>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row pe-2 pt-2" style="height: 700px;">
+    <div class="container ">
+      <mat-card class="h-100 w-100 bs-bb d-flex flex-row align-items-center justify-content-center">
+        <span class="fs-2"> Message Box</span>
+      </mat-card>
+    </div>
+
   </div>
 </div>

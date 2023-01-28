@@ -1,1 +1,9 @@
-<p>viewer works!</p>
+<canvas
+  #canvas
+  id="viewer"
+  [style.height.px]="height"
+  [style.width.px]="width"
+  (mousemove)="onMouseMove($event)"
+  (mousedown)="onMouseDown($event)"
+  (mouseup)="onMouseUp($event)"
+></canvas>
