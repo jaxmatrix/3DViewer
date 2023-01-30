@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import * as THREE from 'three';
-const THREE_ADDON = require('three-addons');
+import * as THREE_ADDON from 'three-addons';
+// declare var OrbitControl : any;
 
 
 @Component({
@@ -30,7 +31,7 @@ export class ViewerComponent implements AfterViewInit {
   light1 = new THREE.AmbientLight(0xffffff, 0.1);
   light2 = new THREE.DirectionalLight(0xffffff, 2);
 
-  // orgbitControl !: any; // Type for three addon not implemented yet
+  orgbitControl !: any; // Type for three addon not implemented yet
 
   constructor () {
     this.scene = new THREE.Scene();
@@ -56,17 +57,22 @@ export class ViewerComponent implements AfterViewInit {
     this.scene.add(this.light1);
     this.scene.add(this.light2);
 
-    // this.orgbitControl = new THREE_ADDON.OrbitControl(this.camera, this.canvas);
+    // this.orgbitControl = new OrbitControl(this.camera, this.canvas);
+
     console.log(this.camera);
   }
 
   private initRendering(){
     this.renderer = new THREE.WebGLRenderer({ canvas : this.canvas });
+    // console.log*()
     this.renderer.setPixelRatio(devicePixelRatio);
     this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
   }
 
   ngAfterViewInit() {
+    this.orgbitControl =new THREE_ADDON.OrbitControls(this.camera, this.canvas);
+    // console.log(THREE_ADDON, THREE_ADDON.OrbitControls
+    //   )
     this.initRendering();
     this.animate();
   }
@@ -83,10 +89,10 @@ export class ViewerComponent implements AfterViewInit {
   }
 
   onMouseDown(event : any) {
-    console.log(event);
+    // console.log(event);
   }
 
   onMouseUp(event : any){
-    console.log(event);
+    // console.log(event);
   }
 }

@@ -34,7 +34,7 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/three-addons/build/three.addons.min.js"
+              "node_modules/three-addons/build/three-addons.min.js"
             ]
           },
           "configurations": {
