@@ -1,4 +1,18 @@
-<canvas
+<div style="position:relative;">
+  <div style="position: absolute; top: 10px; left: 10px">
+    <div class="btn-primary btn me-1">Home</div>
+    <div class="btn-primary btn me-1">Pan</div>
+    <div class="btn-primary btn me-1">Move</div>
+    <div class="btn-primary btn me-1">Rotate</div>
+  </div>
+
+
+  <div style="position: absolute;" *ngFor=" let sensor of sensorsStatus"
+    [style.left.px]="sensor.location[0]" [style.top.px]="sensor.location[1]">
+    <app-label [labelMessage]="sensor.name"></app-label>
+  </div>
+
+  <canvas
   #canvas
   id="viewer"
   [style.height.px]="height"
@@ -7,3 +21,6 @@
   (mousedown)="onMouseDown($event)"
   (mouseup)="onMouseUp($event)"
 ></canvas>
+
+
+</div>

@@ -1,12 +1,11 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { label3d, labelStatus } from './../services/label-map.service';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import * as THREE_ADDON from 'three-addons';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // import { GLTFLoader } from 'three';
 // import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
-
 
 @Component({
   selector: 'app-viewer',
@@ -38,7 +37,12 @@ export class ViewerComponent implements AfterViewInit {
   orgbitControl !: OrbitControls; // Type for three addon not implemented yet
   private loader = new GLTFLoader();
 
-  constructor () {
+  sensorLocations = [];
+  sensorPos ?: THREE.Vector2= new THREE.Vector2();
+  sensorsStatus : Array<label3d> = [];
+
+
+  constructor (private cdr : ChangeDetectorRef) {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x000000);
 
@@ -67,10 +71,15 @@ export class ViewerComponent implements AfterViewInit {
     console.log(THREE_ADDON, THREE, GLTFLoader);
 
     const self = this;
-    this.loader.load('assets/chillerYork.glb', function (gltf) {
-      self.scene.add(gltf.scene);
-      console.log('model', self, gltf, gltf.scene);
+    this.loader.load('assets/chillerYork1.glb', function (gltf) {
+      const root = gltf.scene;
+      self.scene.add(root);
+      console.log('model', self, gltf, root);
+      console.log(dumpObject(root).join('\n'));
+      self.sensorLocations = root.children.filter( (c) => { console.log(c.name.includes('Sensor')); return c.name.includes('Sensor') });
+      console.log(self.sensorLocations);
     }, (p)=>{console.log('gltf progress', p);}, (e)=>{console.log('error', e);});
+
   }
 
   private initRendering(){
@@ -99,6 +108,33 @@ export class ViewerComponent implements AfterViewInit {
     // this.mesh.rotation.x += 0.01;
     // this.mesh.rotation.y += 0.02;
     this.renderer.render(this.scene, this.camera);
+
+
+    this.sensorsStatus = [];
+    this.sensorLocations.forEach( (s : THREE.Mesh) => {
+      s.visible = false;
+      // http://jsfiddle.net/meirm/kgxeuz24/186/
+      let vector = new THREE.Vector3();
+
+      let wh = 0.5*this.canvas.clientWidth;
+      let hh = 0.5*this.canvas.clientHeight;
+
+      s.updateMatrixWorld()
+      vector.setFromMatrixPosition(s.matrixWorld);
+      vector.project(this.camera);
+
+      vector.x = (vector.x * wh) + wh;
+      vector.y = (-vector.y * hh) + hh;
+      // console.log(vector.x, vector.y, vector.z);
+
+      // this.sensorPos.x = vector.x;
+      // this.sensorPos.y = vector.y;
+
+      // console.log(s.visible)
+      // this.cdr.detectChanges();
+      this.sensorsStatus.push( {name : s.name, location : [vector.x, vector.y], status : labelStatus.info });
+
+    });
   }
 
   onMouseMove(event : any){
@@ -112,4 +148,19 @@ export class ViewerComponent implements AfterViewInit {
   onMouseUp(event : any){
     // console.log(event);
   }
+
+
+}
+
+function dumpObject(obj, lines = [], isLast = true, prefix = '') {
+  console.log('Dumping Object')
+  const localPrefix = isLast ? '└─' : '├─';
+  lines.push(`${prefix}${prefix ? localPrefix : ''}${obj.name || '*no-name*'} [${obj.type}]`);
+  const newPrefix = prefix + (isLast ? '  ' : '│ ');
+  const lastNdx = obj.children.length - 1;
+  obj.children.forEach((child, ndx) => {
+    const isLast = ndx === lastNdx;
+    dumpObject(child, lines, isLast, newPrefix);
+  });
+  return lines;
 }
